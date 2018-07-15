@@ -21,4 +21,17 @@
  
  过程中工具主要调用ZTlbImp2来生成Interop的DLL,然后调用ZAxImp来生成控件的AxHost包装类源码文件.并在最后将所有生成好的文件统一放在一个叫做Target的文件夹下面,换言之这里面存储了整个生成过程的结果,其余文件夹都是过程中的部分结果.例如00文件夹和01文件夹加起来所有的文件正好等于Target,这样做的目的是为了调试方便(每一步都去看编码文件夹),最后拿到结果也方便(直接去Target).
  
+ 默认情况下,工具生成的COM组件包括:
+ |----|----|
+ |文件名|描述|
+ |ADODBV28.dll|ADODB 2.8版本 对应msado28.tlb|
+ |UAPvouchercontrol85| U8单据控件|
+ |u8vouchlist| U8单据列表控件|
+ |U8RefEdit| U8参照控件 带文本框编辑功能|
+ |UFGeneralFilterOCX|  U8过滤控件|
+ |voucherco_sa|销售模块CO类,API调用的关键类|
+ |PrintControl|U8打印控件|
+ |US_Pz|凭证组件 这个用处不是很大|
+ |ReferMakeVouch|这个我也不清楚,仅仅是测试用|
+ 
  
