@@ -1,15 +1,14 @@
 echo off
-::--请指明用友软件的安装目录,注意结尾的\
+::--请指明用友软件的安装目录
 set U8PATH=C:\U8Soft\
-::--请指定需要将结果保存到哪个目录,最好在目录名字上带版本号,注意结尾的\
+::--请指定需要将结果保存到哪个目录
 set TARPATH=C:\AX_U8V1300\
-::--请指定工具命令所在的目录,注意结尾的\
+::--请指定工具命令所在的目录
 set BINPATH=C:\ax_new\Bin\
-
 
 set U8INTEROP=%U8PATH%Interop\
 set U8COMSQL=%U8PATH%ufcomsql\
-set TLBPARAM=/sysarray /unsafe /machine:X86
+set TLBPARAM=/sysarray /unsafe /machine:X86 /silent
 set AXPARAM=/source
 set TLBIMP=%BINPATH%ztlbimp2.exe
 set AXIMP=%BINPATH%zaximp.exe
@@ -27,84 +26,26 @@ call:GODIR 00COMMON
 copy %U8INTEROP%Interop.U8Login.dll %cd%\Interop.U8Login.dll 
 ::--拷贝v2.6版本的ADODB.dll
 copy C:\Windows\assembly\GAC\ADODB\7.0.3300.0__b03f5f7f11d50a3a\adodb.dll %cd%\adodb.dll
-call:AddRef %cd%\Interop.U8Login.dll
-call:AddRef %cd%\adodbv28.dll
-call:AddRef %cd%\adodb.dll
+call:AddRefByDir %cd%
 call:GORet
 
 echo.%TLBPARAM%
 ::第三步 顺序生成ocx和dll对应的interop文件
-call:GODIR 01UAPvouchercontrol85
-call:TLBIMP %U8COMSQL%UAPvouchercontrol85.ocx
-call:AddRef %cd%\VBA.dll
-call:AddRef %cd%\MSXML2.dll
-call:AddRef %cd%\EDITLib.dll
-call:AddRef %cd%\VBRUN.dll
-call:AddRef %cd%\VSFlex8N.dll
-call:AddRef %cd%\MSHierarchicalFlexGridLib.dll
-call:AddRef %cd%\UFToolBarCtrl.dll
-call:AddRef %cd%\UAPUfToolKit85.dll
-call:AddRef %cd%\UAPVoucherControl85.dll
-call:AXIMP  %U8COMSQL%UAPvouchercontrol85.ocx
-call:GORet
+call:CreateDLLAndAxHost 01UAPvouchercontrol85 %U8COMSQL%UAPvouchercontrol85.ocx
 
+call:CreateDLLAndAxHost 02u8vouchlist %U8COMSQL%U8VouchList.ocx
 
-call:GODIR 02u8vouchlist
-echo.注册u8vouchlist.ocx
-call:TLBIMP %U8COMSQL%U8VouchList.ocx
-call:AddRef %cd%\Scripting.dll
-call:AddRef %cd%\MsSuperGrid.dll
-call:AddRef %cd%\VSFlex8U.dll
-call:AddRef %cd%\U8VouchList.dll
-call:AXIMP  %U8COMSQL%U8VouchList.ocx
-call:AXIMP  %U8COMSQL%vsflex8u.ocx
-call:GORet
+call:CreateDLLAndAxHost 03U8RefEdit %U8COMSQL%U8RefEdit.ocx
 
+call:CreateDLLAndAxHost 04UFGeneralFilterOCX %U8COMSQL%UFGeneralFilterOCX.ocx
 
-call:GODIR 03U8RefEdit
-call:TLBIMP %U8COMSQL%U8RefEdit.ocx
-call:AddRef %cd%\U8Ref.dll
-call:AXIMP %U8COMSQL%U8RefEdit.ocx
-call:GORet
+call:CreateDLL 05voucherco_sa %U8COMSQL%voucherco_sa.dll
 
+call:CreateDLLAndAxHost 06PrintControl %U8COMSQL%PrintControl.ocx
 
-call:GODIR 04UFGeneralFilterOCX
-call:TLBIMP %U8COMSQL%UFGeneralFilterOCX.ocx
-call:AddRef %cd%\UFGeneralFilterPub.dll
-call:AddRef %cd%\UFGeneralFilterOCX.dll
-call:AXIMP  %U8COMSQL%UFGeneralFilterOCX.ocx
-call:GORet
+call:CreateDLL 07US_Pz %U8COMSQL%US_Pz.dll
 
-call:GODIR 05voucherco_sa
-call:TLBIMP %U8COMSQL%voucherco_sa.dll
-call:GORet
-
-
-call:GODIR  06PrintControl
-call:TLBIMP %U8COMSQL%PrintControl.ocx
-call:AddRef %cd%\PRINTCONTROLLib.dll
-call:AXIMP  %U8COMSQL%PrintControl.ocx
-call:GORet
-
-
-call:GODIR 07US_Pz
-call:TLBIMP %U8COMSQL%US_Pz.dll
-call:AddRef %cd%\ADOX.dll
-call:AddRef %cd%\DAO.dll
-call:AddRef %cd%\U8DefPro.dll
-call:AddRef %cd%\U8RowAuthsvr.dll
-call:AddRef %cd%\UfDbKit.dll
-call:AddRef %cd%\UFPortalProxyInterface.dll
-call:AddRef %cd%\ZzPub.dll
-call:AddRef %cd%\ZzPz.dll
-call:GORet
-
-call:GODIR 08ReferMakeVouch
-call:TLBIMP %U8COMSQL%ReferMakeVouch.ocx
-call:AddRef %cd%\ReferMakeVouch.dll
-call:AXIMP  %U8COMSQL%ReferMakeVouch.ocx
-call:AXIMP C:\Windows\SysWOW64\MSCOMCTL.OCX
-call:GORet
+call:CreateDLLAndAxHost 08ReferMakeVouch %U8COMSQL%ReferMakeVouch.ocx
 
 call:GODIR 09UFToolBarCtrl
 call:AXIMP %U8COMSQL%UFToolBarCtrl.ocx
@@ -117,7 +58,7 @@ goto:eof
 ::--------------------------------------------------------
 :TLBIMP    - here starts my function identified by it`s label
 ::echo. 生成 %~1
-%TLBIMP% "%~1"  %TLBPARAM%
+%TLBIMP% "%~1"  %TLBPARAM% >tlbimp.log
 goto:eof
 
 ::--------------------------------------------------------
@@ -125,7 +66,7 @@ goto:eof
 ::--------------------------------------------------------
 :AXIMP    - here starts my function identified by it`s label
 ::echo. 生成 %~1
-%AXIMP% "%~1"  %AXPARAM%
+%AXIMP% "%~1"  %AXPARAM% >aximp.log
 goto:eof
 
 ::--------------------------------------------------------
@@ -142,9 +83,9 @@ goto:eof
 ::-- 方便生成后进行观察和调试
 ::--------------------------------------------------------
 :GODIR
-mkdir %~1
-cd %~1
-del *.dll
+mkdir %~1 >nul
+cd %~1 >nul
+del *.dll >nul
 goto:eof
 
 ::--------------------------------------------------------
@@ -152,7 +93,42 @@ goto:eof
 ::-- 用于从GODIR中快速返回到工作主目录
 ::--------------------------------------------------------
 :GORet
-del Ax*.dll
-del Ax*.pdb
-copy *.* %TARPATH%Target
+del Ax*.dll >nul
+del Ax*.pdb >nul
+copy *.cs %TARPATH%Target >nul
+copy *.dll %TARPATH%Target >nul
 cd %TARPATH%
+goto:eof
+
+::--------------------------------------------------------
+::-- AddRefByDir罗列某目录下的所有dll文件，并自动调用AddRef
+::--------------------------------------------------------
+:AddRefByDir %~1
+:: 参数 /R 表示需要遍历子文件夹,去掉表示不遍历子文件夹
+:: %%f 是一个变量,类似于迭代器,但是这个变量只能由一个字母组成,前面带上%%
+:: 括号中是通配符,可以指定后缀名,*.*表示所有文件
+for /R %~1 %%f in (*.dll) do ( 
+call:AddRef %%f
+)
+goto:eof
+
+::--------------------------------------------------------
+::-- CreateDLLAndAxHost 调用tlbimp和axImp生成
+::--------------------------------------------------------
+:CreateDLLAndAxHost %~1 %~2
+call:GODIR %~1
+call:TLBIMP %~2
+call:AddRefByDir %cd%
+call:AXIMP  %~2
+call:GORet
+goto:eof
+
+::--------------------------------------------------------
+::-- CreateDLL 调用tlbimp生成
+::--------------------------------------------------------
+:CreateDLL %~1 %~2
+call:GODIR %~1
+call:TLBIMP %~2
+call:AddRefByDir %cd%
+call:GORet
+goto:eof
