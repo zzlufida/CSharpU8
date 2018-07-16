@@ -1,5 +1,7 @@
 # CSharpU8
 一个快速生成U8相关COM Interop的工程,用于给C#语言进行调用,包括控件
+具体的技术细节在这篇博客中已经介绍了,这里不再重复
+https://blog.csdn.net/zzlufida/article/details/81056123
 ## 文件基本信息
  - Bin\ZTlbImp2.exe 这是一个经过特殊绿化处理的Interop生成工具,他可以在Win7和Win2008系统中正常的生成Interop文件,不会遇到ADODB引用错误.
 - Bin\ZTlibImp.exe 这个是微软原装的TlbImp文件包装的,经过特殊绿化,但是不建议使用,他在遇到变体类型参数的时候,会有一些错误,不适合和AxImp配合使用,所以我都使用ZTlbImp2,这个就是临时放在这里,如果遇到问题,可以切换进行对比.
