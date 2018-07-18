@@ -13,6 +13,7 @@ set AXPARAM=/source
 set TLBIMP=%BINPATH%ztlbimp2.exe
 set AXIMP=%BINPATH%zaximp.exe
 set R_=/reference:
+set FR=%BINPATH%fr.exe
 
 ::第一步 前往目的目录
 call:GODIR %TARPATH%
@@ -51,6 +52,14 @@ call:GODIR 09UFToolBarCtrl
 call:AXIMP %U8COMSQL%UFToolBarCtrl.ocx
 call:GORet
 
+call:GODIR 10MSCOMCTL
+call:AXIMP c:\windows\syswow64\MSCOMCTL.OCX
+call:GORet
+
+
+%FR% %TARPATH%Target\*.cs /r:"public\sclass\s(.*)\s[:]\sSystem.Windows.Forms.AxHost" -t:"[System.ComponentModel.ToolboxItem(true)]\n    public class \1 : System.Windows.Forms.AxHost"
+%FR% %TARPATH%Target\*.cs /r:"[[]assembly: System.Reflection.AssemblyVersion.*\n" /t:""
+%FR% %TARPATH%Target\*.cs /r:"[[]assembly: System.Windows.Forms.AxHost.TypeLibraryTimeStamp.*\n" /t:""
 goto:eof
 
 ::--------------------------------------------------------
@@ -66,7 +75,7 @@ goto:eof
 ::--------------------------------------------------------
 :AXIMP    - here starts my function identified by it`s label
 ::echo. 生成 %~1
-%AXIMP% "%~1"  %AXPARAM% >aximp.log
+%AXIMP% "%~1"  %AXPARAM% 
 goto:eof
 
 ::--------------------------------------------------------
