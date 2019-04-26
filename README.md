@@ -11,6 +11,7 @@ https://blog.csdn.net/zzlufida/article/details/81056123
  - ILMergeGUI_Portable.exe 用于进行DLL合并工作,这个工具可以将多个分散的DLL文件合并成一个DLL.
  - 增加UAPEventSyncAdapter.dll插件,用于跟踪单据的DOM生成,具体文章可以到这里查看https://blog.csdn.net/zzlufida/article/details/83104492
  - AX_U8V1300 这个目录就是U8 13.0版本输出的一个结果,其中aaaa.dll就是我合并出来的完成品,名字可以随便定义,使用ILMergeGUI_Portable指定.
+ - VB6 OCX许可证算法分析.xlsm 用来计算VB6开发的OCX控件的许可证，方便开发人员使用。
  ## 工作原理
  Start.bat 执行时会确定3个信息:
  
