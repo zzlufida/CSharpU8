@@ -25,8 +25,14 @@ call:GODIR 00COMMON
  %TLBIMP% "C:\Program Files (x86)\Common Files\System\ado\msado28.tlb" /namespace:ADODBV28 /out:"ADODBV28.dll" %TLBPARAM%
 ::--拷贝interop.u8login.dll
 copy %U8INTEROP%Interop.U8Login.dll %cd%\Interop.U8Login.dll 
+
+::--拷贝Interop.MSXML2.dll 增加msxml的引用，这么做，是尽量使用u8原厂的文件，防止后期自动生产
+copy %U8INTEROP%Interop.MSXML2.dll %cd%\Interop.MSXML2.dll
+
 ::--拷贝v2.6版本的ADODB.dll
 copy C:\Windows\assembly\GAC\ADODB\7.0.3300.0__b03f5f7f11d50a3a\adodb.dll %cd%\adodb.dll
+
+::--将%cd%下的所有dll文件，放入到引用参数中
 call:AddRefByDir %cd%
 call:GORet
 
